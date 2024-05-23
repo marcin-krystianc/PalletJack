@@ -5592,7 +5592,7 @@ uint32_t RowGroup::read(::apache::thrift::protocol::TProtocol* iprot) {
             this->columns.resize(_size140);
             uint32_t _i144;
             for (_i144 = 0; _i144 < _size140; ++_i144)
-            {              
+            {
               this->column_chunks_offsets.push_back(xfer);
               xfer += this->columns[_i144].read(iprot);
             }
@@ -6961,7 +6961,7 @@ uint32_t FileMetaData::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 3:
-        if (ftype == ::apache::thrift::protocol::T_I64) {        
+        if (ftype == ::apache::thrift::protocol::T_I64) {
           this->num_rows_offsets.push_back(xfer);
           xfer += iprot->readI64(this->num_rows);
           this->num_rows_offsets.push_back(xfer);
@@ -7036,7 +7036,7 @@ uint32_t FileMetaData::read(::apache::thrift::protocol::TProtocol* iprot) {
             {
               this->column_orders_offsets.push_back(xfer);
               xfer += this->column_orders[_i238].read(iprot);
-            }            
+            }
             this->column_orders_offsets.push_back(xfer);
             xfer += iprot->readListEnd();
           }
@@ -7307,5 +7307,145 @@ FileCryptoMetaData& FileCryptoMetaData::operator=(const FileCryptoMetaData& othe
   return *this;
 }
 
-} // namespace
+MyTestStructure::~MyTestStructure() noexcept {
 }
+
+
+void MyTestStructure::__set_columns_struct(const std::vector<ColumnChunk> & val) {
+  this->columns_struct = val;
+__isset.columns_struct = true;
+}
+
+void MyTestStructure::__set_columns_binary(const std::vector<std::string> & val) {
+  this->columns_binary = val;
+__isset.columns_binary = true;
+}
+
+uint32_t MyTestStructure::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  ::apache::thrift::protocol::TInputRecursionTracker tracker(*iprot);
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_LIST) {
+          {
+            this->columns_struct.clear();
+            uint32_t _size247;
+            ::apache::thrift::protocol::TType _etype250;
+            xfer += iprot->readListBegin(_etype250, _size247);
+            this->columns_struct.resize(_size247);
+            uint32_t _i251;
+            for (_i251 = 0; _i251 < _size247; ++_i251)
+            {
+              xfer += this->columns_struct[_i251].read(iprot);
+            }
+            xfer += iprot->readListEnd();
+          }
+          this->__isset.columns_struct = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_LIST) {
+          {
+            this->columns_binary.clear();
+            uint32_t _size252;
+            ::apache::thrift::protocol::TType _etype255;
+            xfer += iprot->readListBegin(_etype255, _size252);
+            this->columns_binary.resize(_size252);
+            uint32_t _i256;
+            for (_i256 = 0; _i256 < _size252; ++_i256)
+            {
+              xfer += iprot->readBinary(this->columns_binary[_i256]);
+            }
+            xfer += iprot->readListEnd();
+          }
+          this->__isset.columns_binary = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t MyTestStructure::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  ::apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
+  xfer += oprot->writeStructBegin("MyTestStructure");
+
+  if (this->__isset.columns_struct) {
+    xfer += oprot->writeFieldBegin("columns_struct", ::apache::thrift::protocol::T_LIST, 1);
+    {
+      xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->columns_struct.size()));
+      std::vector<ColumnChunk> ::const_iterator _iter257;
+      for (_iter257 = this->columns_struct.begin(); _iter257 != this->columns_struct.end(); ++_iter257)
+      {
+        xfer += (*_iter257).write(oprot);
+      }
+      xfer += oprot->writeListEnd();
+    }
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.columns_binary) {
+    xfer += oprot->writeFieldBegin("columns_binary", ::apache::thrift::protocol::T_LIST, 2);
+    {
+      xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, static_cast<uint32_t>(this->columns_binary.size()));
+      std::vector<std::string> ::const_iterator _iter258;
+      for (_iter258 = this->columns_binary.begin(); _iter258 != this->columns_binary.end(); ++_iter258)
+      {
+        xfer += oprot->writeBinary((*_iter258));
+      }
+      xfer += oprot->writeListEnd();
+    }
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+void swap(MyTestStructure &a, MyTestStructure &b) {
+  using ::std::swap;
+  swap(a.columns_struct, b.columns_struct);
+  swap(a.columns_binary, b.columns_binary);
+  swap(a.__isset, b.__isset);
+}
+
+MyTestStructure::MyTestStructure(const MyTestStructure& other259) {
+  columns_struct = other259.columns_struct;
+  columns_binary = other259.columns_binary;
+  __isset = other259.__isset;
+}
+MyTestStructure& MyTestStructure::operator=(const MyTestStructure& other260) {
+  columns_struct = other260.columns_struct;
+  columns_binary = other260.columns_binary;
+  __isset = other260.__isset;
+  return *this;
+}
+} // namespace

@@ -269,12 +269,15 @@ struct Encoding {
      */
     RLE_DICTIONARY = 8,
     /**
-     * Encoding for floating-point data.
+     * Encoding for fixed-width data (FLOAT, DOUBLE, INT32, INT64, FIXED_LEN_BYTE_ARRAY).
      * K byte-streams are created where K is the size in bytes of the data type.
-     * The individual bytes of an FP value are scattered to the corresponding stream and
+     * The individual bytes of a value are scattered to the corresponding stream and
      * the streams are concatenated.
      * This itself does not reduce the size of the data but can lead to better compression
      * afterwards.
+     * 
+     * Added in 2.8 for FLOAT and DOUBLE.
+     * Support for INT32, INT64 and FIXED_LEN_BYTE_ARRAY added in 2.11.
      */
     BYTE_STREAM_SPLIT = 9
   };
@@ -452,6 +455,8 @@ class EncryptionAlgorithm;
 class FileMetaData;
 
 class FileCryptoMetaData;
+
+class MyTestStructure;
 
 typedef struct _SizeStatistics__isset {
   _SizeStatistics__isset() : unencoded_byte_array_data_bytes(false), repetition_level_histogram(false), definition_level_histogram(false) {}
@@ -1903,7 +1908,7 @@ std::ostream& operator<<(std::ostream& out, const KeyValue& obj);
 
 
 /**
- * Wrapper struct to specify sort order
+ * Sort order within a RowGroup of a leaf column
  */
 class SortingColumn : public virtual ::apache::thrift::TBase {
  public:
@@ -1918,7 +1923,7 @@ class SortingColumn : public virtual ::apache::thrift::TBase {
 
   virtual ~SortingColumn() noexcept;
   /**
-   * The column index (in this row group) *
+   * The ordinal position of the column (in this row group) *
    */
   int32_t column_idx;
   /**
@@ -2586,6 +2591,13 @@ typedef struct _OffsetIndex__isset {
   bool unencoded_byte_array_data_bytes :1;
 } _OffsetIndex__isset;
 
+/**
+ * Optional offsets for each data page in a ColumnChunk.
+ * 
+ * Forms part of the page index, along with ColumnIndex.
+ * 
+ * OffsetIndex may be present even if ColumnIndex is not.
+ */
 class OffsetIndex : public virtual ::apache::thrift::TBase {
  public:
 
@@ -2631,8 +2643,14 @@ typedef struct _ColumnIndex__isset {
 } _ColumnIndex__isset;
 
 /**
- * Description for ColumnIndex.
- * Each <array-field>[i] refers to the page at OffsetIndex.page_locations[i]
+ * Optional statistics for each data page in a ColumnChunk.
+ * 
+ * Forms part the page index, along with OffsetIndex.
+ * 
+ * If this structure is present, OffsetIndex must also be present.
+ * 
+ * For each field in this structure, <field>[i] refers to the page at
+ * OffsetIndex.page_locations[i]
  */
 class ColumnIndex : public virtual ::apache::thrift::TBase {
  public:
@@ -3020,7 +3038,44 @@ void swap(FileCryptoMetaData &a, FileCryptoMetaData &b);
 
 std::ostream& operator<<(std::ostream& out, const FileCryptoMetaData& obj);
 
-} // namespace
+typedef struct _MyTestStructure__isset {
+  _MyTestStructure__isset() : columns_struct(false), columns_binary(false) {}
+  bool columns_struct :1;
+  bool columns_binary :1;
+} _MyTestStructure__isset;
+
+class MyTestStructure : public virtual ::apache::thrift::TBase {
+ public:
+
+  MyTestStructure(const MyTestStructure&);
+  MyTestStructure& operator=(const MyTestStructure&);
+  MyTestStructure() noexcept {
+  }
+
+  virtual ~MyTestStructure() noexcept;
+  /**
+   * Metadata for each column chunk in this row group.
+   * This list must have the same order as the SchemaElement list in FileMetaData.
+   * 
+   */
+  std::vector<ColumnChunk>  columns_struct;
+  std::vector<std::string>  columns_binary;
+
+  _MyTestStructure__isset __isset;
+
+  void __set_columns_struct(const std::vector<ColumnChunk> & val);
+
+  void __set_columns_binary(const std::vector<std::string> & val);
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot) override;
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const override;
+
+};
+
+void swap(MyTestStructure &a, MyTestStructure &b);
+
+std::ostream& operator<<(std::ostream& out, const MyTestStructure& obj);
+
 } // namespace
 
 #endif

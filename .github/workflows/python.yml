@@ -36,7 +36,6 @@ jobs:
     steps:
       - run: |
           echo "Testing builds"
-          exit 1
 
   test-more:
     name: Test more
@@ -55,4 +54,6 @@ jobs:
       - test
       - test-more
     steps:
-      - run: echo "Workflows have succeeded!"
+      - run: |
+          echo "Some workflows have failed!"
+          exit 1

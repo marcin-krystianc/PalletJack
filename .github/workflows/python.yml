@@ -1,4 +1,4 @@
-name: build
+name: build2
 
 on:
   workflow_dispatch:
@@ -36,6 +36,7 @@ jobs:
     steps:
       - run: |
           echo "Testing builds"
+          exit 1
 
   test-more:
     name: Test more

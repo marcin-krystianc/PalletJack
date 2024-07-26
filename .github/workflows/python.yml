@@ -17,7 +17,7 @@ permissions:
 jobs:
         
   test:
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.id != github.event.pull_request.base.repo.id
+    if: github.event.repository.owner.id == github.event.sender.id
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -49,8 +49,8 @@ jobs:
         pytest
 
   build:
-    needs: test
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.id != github.event.pull_request.base.repo.id
+    needs: test    
+    if: github.event.repository.owner.id == github.event.sender.id
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]

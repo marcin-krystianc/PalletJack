@@ -70,6 +70,7 @@ before-all = [
   # Copy vcpkg and its installed packages to the output directory on the host.
   # This allows for persistent caching with 'actions/cache'.
   "mkdir -p /output",
+  "cp -r vcpkg /output/vcpkg",
   "cp -r vcpkg-binary-cache /output/vcpkg-binary-cache",
 ]
 
